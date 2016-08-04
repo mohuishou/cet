@@ -19,6 +19,8 @@ var rnd=function (start, end){
  * @param callback 回调
  */
 cet.getTicket=function (name,school,cetType,callback) {
+  //随机ip
+  var ip=rnd(0,255)+"."+rnd(0,255)+"."+rnd(0,255)+"."+rnd(0,255);
   request.post({
     url: 'http://find.cet.99sushe.com/search',
     encoding: null,
