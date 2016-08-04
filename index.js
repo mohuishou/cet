@@ -2,6 +2,16 @@ var express = require('express');
 var cet = require('./cet');
 var app = express();
 var bodyParser = require('body-parser');
+
+var date=new Date();
+Y = date.getFullYear() + '-';
+M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+D = date.getDay() + ' ';
+h = date.getHours() + ':';
+m = date.getMinutes() + ':';
+s = date.getSeconds();
+var time=Y+M+D+h+m+s;
+
 var success=function (r,info,data) {
     var return_data={
         "status":200,
@@ -9,9 +19,10 @@ var success=function (r,info,data) {
         "data":data
     };
     r.json(return_data);
+    console.log("INFO:[time: "+time+"]"+info);
     return true;
 };
-var date=new Date();
+
 var error =function (r,info) {
     var return_data={
         "status":500,
@@ -20,13 +31,7 @@ var error =function (r,info) {
     r.json(return_data);
 
     //控制台输出错误信息
-    Y = date.getFullYear() + '-';
-    M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-    D = date.getDay() + ' ';
-    h = date.getHours() + ':';
-    m = date.getMinutes() + ':';
-    s = date.getSeconds();
-    var time=Y+M+D+h+m+s;
+
     console.log("INFO:[time: "+time+"]"+info);
     return false;
 };
@@ -100,7 +105,9 @@ app.post('/grade', function (req, res) {
 
 });
 
-var server = app.listen(3000, function () {
+
+
+var server = app.listen(3001, function () {
     var host = server.address().address;
     var port = server.address().port;
 

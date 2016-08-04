@@ -7,6 +7,10 @@ var cet={};
 cet.ticket='';
 cet.grade={};
 
+var rnd=function (start, end){
+    return Math.floor(Math.random() * (end - start) + start);
+}
+
 /**
  * 获取准考证号
  * @param name 姓名
@@ -18,6 +22,10 @@ cet.getTicket=function (name,school,cetType,callback) {
   request.post({
     url: 'http://find.cet.99sushe.com/search',
     encoding: null,
+    headers: {
+      'Referer':'http://find.cet.99sushe.com',
+      "X-Forwarded-For":ip
+  },
     body: decoder.getEncryptReqBody(cetType, school, name)
   }, function (err, req, bodyBuf) {
     if (err) {
@@ -26,6 +34,7 @@ cet.getTicket=function (name,school,cetType,callback) {
     var ticket = decoder.decryptResBody(bodyBuf);
     if(ticket){
       try{
+          console.log("准考证号获取成功！"+ticket);
         callback(null,ticket);
         return false;
       }catch (err){
@@ -49,11 +58,13 @@ cet.getTicket=function (name,school,cetType,callback) {
 cet.getGrade=function(name,ticket,callback){
   //即将传递的参数
   var param='zkzh='+ticket+'&xm='+name;
+  var ip=rnd(0,255)+"."+rnd(0,255)+"."+rnd(0,255)+"."+rnd(0,255);
   request.post({
     url:"http://www.chsi.com.cn/cet/query?"+encodeURI(param),
     headers: {
       'Referer':'http://www.chsi.com.cn/cet/',
-      'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.75 Safari/537.36'
+      'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.75 Safari/537.36',
+      "X-Forwarded-For":ip
     }
   },function (err, req, body) {
     if (err) {
@@ -68,6 +79,7 @@ cet.getGrade=function(name,ticket,callback){
 
     //检测是否获得数据
     if(!$cet_info.text()){
+        console.log(body);
       callback("获取成绩失败！请检测您输入的信息是否有误！");
       return false;
     }
