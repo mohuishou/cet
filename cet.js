@@ -1,5 +1,5 @@
 //无准考证查询
-var decoder = require('ling-cet-decoder');
+var decoder = require('./ling-cet-decoder/index');
 var request = require('request');
 var http = require('http');
 var cheerio = require('cheerio');
@@ -20,15 +20,15 @@ var rnd = function (start, end) {
  */
 cet.getTicket = function (name, school, cetType, callback) {
   //随机ip
-  var ip = rnd(0, 255) + "." + rnd(0, 255) + "." + rnd(0, 255) + "." + rnd(0, 255);
+  var ip = 119+ "." + 16 + "." + rnd(0, 255) + "." + rnd(0, 255);
   request.post({
     url: 'http://find.cet.99sushe.com/search',
     encoding: null,
     headers: {
       'Referer': 'http://find.cet.99sushe.com',
-      "X-Forwarded-For": ip
     },
-    body: decoder.getEncryptReqBody(cetType, school, name)
+    body: decoder.getEncryptReqBody(cetType, school, name),
+    proxies:ip
   }, function (err, req, bodyBuf) {
     if (err) {
       throw new Error(err);
@@ -150,5 +150,6 @@ cet.getGradeNoId = function (name, school, cetType, callback) {
     });
   });
 };
+
 
 module.exports = cet;
