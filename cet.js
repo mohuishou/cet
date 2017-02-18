@@ -1,8 +1,10 @@
 //无准考证查询
 var decoder = require('./ling-cet-decoder/index');
 var request = require('request');
-var http = require('http');
 var cheerio = require('cheerio');
+var ip = require('./ip');
+
+
 var cet = {};
 cet.ticket = '';
 cet.grade = {};
@@ -20,17 +22,18 @@ var rnd = function (start, end) {
  */
 cet.getTicket = function (name, school, cetType, callback) {
   //随机ip
-  var ip = 119+ "." + 16 + "." + rnd(0, 255) + "." + rnd(0, 255);
   request.post({
     url: 'http://find.cet.99sushe.com/search',
     encoding: null,
     headers: {
-      'Referer': 'http://find.cet.99sushe.com',
+      'Referer': 'http://find.cet.99sushe.com'
     },
     body: decoder.getEncryptReqBody(cetType, school, name),
-    proxies:ip
+    timeout: 5000,
+    proxy:"http://111.72.120.38:8998"
   }, function (err, req, bodyBuf) {
     if (err) {
+      console.log(err.code)
       throw new Error(err);
     }
     var ticket = decoder.decryptResBody(bodyBuf);
@@ -49,6 +52,7 @@ cet.getTicket = function (name, school, cetType, callback) {
     }
   });
 };
+
 
 
 /**
